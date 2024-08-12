@@ -50,7 +50,7 @@ int main()
 
 	printf("ELEMENTS IN DATA: %d\n", topControler);
 	printf("SIZE OF DATA: %ld bytes\n", sizeof(int) * topControler );
-    // Print stack contents
+
     for (int i = 0; i < topControler; i++) {
         printf("%d\n", data[i]);
     }

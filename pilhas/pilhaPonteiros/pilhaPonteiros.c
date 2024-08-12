@@ -1,57 +1,59 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//int indexTopControler=0;
-
-void Push( int value, int** data )
+void Push( int value, int** data, int* topControler )
 {
-//    printf("%d\n", **(data));
-
-
-    *(data)=realloc(*(data), sizeof(int)+sizeof(*(data)) );
-    **(data)=value;
-	//size if available here ^
-    //Size()
-
-//    printf("%d\n", **(data) );
-//    printf("%d\n", *(data[0]) );
+	*data = realloc(*data, sizeof(int) * (*topControler + 1));	
+	
+	(*data)[*topControler] = value;
+	(*topControler)++;
 }
 
 
-int Size( int* data )
+
+int Sizestr( int* topControler )
 {
+	//IMPLEMENT STRUCT-BASED DATA STRUCTURE TO HOLD BOTH DATA
+	//AND ITS RESPECTIVE TOPCONTROLER
 
-	int counter = 0;
-      
-    for( int i = sizeof(int); i < sizeof(data); i=i+sizeof(int) ){
- //     printf("%d", *(data+counter));    
-      counter++;
-    }
-	return counter;
-
+	return *topControler;
+	
 }
 
+int Size ( int* data ){
+
+	return sizeof(data)/sizeof(int);
+	
+}
 
 int main()
 {
-	int* data = malloc(sizeof(int));
-
+	int* data = NULL;
+	int topControler = 0;
 	//Push
 	//Pop
 	//Peek
 	//Clean
 	//List
 	//Size
-	Push(5, &data);
-	Push(7, &data);
-    
-    //printf("%d",data[0]);
-    //printf("%d",data[1]);
-    
-//    Size(data);	
 
-	printf("%d\n", Size(data));
-	printf("%d\n%d\n", *(data), *(data+1) );
+	Push(5, &data, &topControler);
 
+	Push(10, &data, &topControler);
+	
+	Push(20, &data, &topControler);
+
+	Push(80, &data, &topControler);
+
+	Push(20, &data, &topControler);
+	printf("TOP: %d\n", topControler);
+
+	printf("ELEMENTS IN DATA: %d\n", topControler);
+	printf("SIZE OF DATA: %ld bytes\n", sizeof(int) * topControler );
+    // Print stack contents
+    for (int i = 0; i < topControler; i++) {
+        printf("%d\n", data[i]);
+    }
+	free(data);
 	return 0;
 }

@@ -29,7 +29,7 @@ int Push ( struct dataStruct** data, int* top, char c){
     }
 
             *data = realloc(*data, (sizeof(struct dataStruct) * ((*top)+1)) ); /* (*top)+1 given top hasnt been incremented, so "make space for that extra
-            struct thats going to be place in a while. */
+            struct thats going to be placed in a while. */
                                           if(!*data){  return -1; }
         
             (*data)[*top].charStruct = c;

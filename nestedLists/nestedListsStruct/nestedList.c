@@ -46,7 +46,7 @@ int PushEnd( struct list* listInput, char* dataToBe ){
                         if(!temp) { return -1; } 
 
     size_t len_dataToBe = strlen(dataToBe);
-    temp->info = strcpy( malloc( len_dataToBe * sizeof(char)), dataToBe );
+    temp->info = strcpy( malloc( (len_dataToBe+1)* sizeof(char)), dataToBe );
                  if(!temp->info) { return -1; }
     temp->size = len_dataToBe;
 
@@ -70,8 +70,8 @@ int PushStart( struct list* listInput, char* dataToBe ){
     struct Node* temp = malloc(sizeof(struct Node));
                         if(!temp){ return -1; }
     
-    size_t len_dataToBe=strlen(dataToBe)+1;
-    temp->info = strcpy(malloc(len_dataToBe*sizeof(char)), dataToBe );
+    size_t len_dataToBe=strlen(dataToBe);
+    temp->info = strcpy(malloc((len_dataToBe + 1)*sizeof(char)), dataToBe );
                         if(!temp->info){ return -1; }
     temp->size = len_dataToBe;
 
@@ -92,9 +92,9 @@ int PushAmong(struct list* listInput, char* dataToBe, char* toBeLooked){
     struct Node* forTemp = listInput->start; 
 
     struct Node* temp = malloc(sizeof(struct Node));
-    size_t len_dataToBe = strlen(dataToBe)+1;
+    size_t len_dataToBe = strlen(dataToBe);
     temp->size = len_dataToBe;
-    temp->info = strcpy( malloc(len_dataToBe*sizeof(char)), dataToBe );
+    temp->info = strcpy( malloc((len_dataToBe+1)*sizeof(char)), dataToBe );
 
     for(int i=0; i<listInput->size; i++){
         
@@ -141,7 +141,7 @@ int PushAmong(struct list* listInput, char* dataToBe, char* toBeLooked){
 int main(int argc, char** argv){
 
     struct list* list1 = malloc(sizeof(struct list));
-    
+    initList(list1);
     //PushEnd(list1, argv[1]);
     PushEnd(list1, "end");
     PushStart(list1, "start");
@@ -182,7 +182,7 @@ int main(int argc, char** argv){
     printf("%p\n\n",list1->end);
 
     
-
+    free(list1);
  
     return 0;
 

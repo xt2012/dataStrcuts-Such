@@ -1,6 +1,6 @@
 # compiled source #
 *.exe
 *.o
-*.swap 
+*.swp 
 
 

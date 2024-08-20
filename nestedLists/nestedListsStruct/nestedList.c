@@ -129,6 +129,58 @@ int PushAmong(struct list* listInput, char* dataToBe, char* toBeLooked){
     return -1;
 }
 
+int cleanList(struct list* list){
+//turn this shit into a talkative idiot with some crazy prints & such to indicate what is being
+//cleared
+
+    size_t temp = list->size;
+    struct Node* tempPointer;
+
+    for(int x = 0; x<temp; x++){
+    
+        list->start->size = 0;
+        list->start->prev = NULL;
+        
+        free(list->start->info);
+        list->start->info = NULL;
+
+        tempPointer = list->start->next;
+        list->start->next = NULL;
+        free(list->start);
+
+        list->start = tempPointer;
+        list->size--;
+    
+    }
+
+
+    /*  list->end->prev = NULL;
+        list->end = NULL;
+        list->start->size = 0;
+        list->start->prev = NULL;
+        free(list->start->info);
+        list->start->info=NULL;
+        list->start->next=NULL;
+        
+        free(list->start);
+        list->start=NULL;
+        list->size--;   
+     */
+
+    //end here. No if : less complexity.
+        list->end->size = 0;
+        list->end->prev = NULL;
+        free(list->end->info);
+        list->end->info=NULL;
+        
+        free(list->end);
+        list->start=NULL;
+        list->end = NULL;
+        list->size--;
+        return 0;
+}
+
+
 //seek return mem address?
 //peek
 //remove
@@ -136,7 +188,8 @@ int PushAmong(struct list* listInput, char* dataToBe, char* toBeLooked){
 //duplicate
 //findDuplicates
 //move
-
+//clean function that null's the list, thus also make a function that creates a new list and
+//add its address to some indexing array.
 
 int main(int argc, char** argv){
 
@@ -181,9 +234,21 @@ int main(int argc, char** argv){
     printf("%ld\n",list1->end->size);
     printf("%p\n\n",list1->end);
 
+
+
+
+
+//remove this to for use
+// /*
+    cleanList(list1);
     
+    printf("%ld\n",list1->size);
+
+    printf("end:  %p\n", list1->end);
+    printf("start:%p\n", list1->start);
+
     free(list1);
- 
+// */ 
     return 0;
 
 }

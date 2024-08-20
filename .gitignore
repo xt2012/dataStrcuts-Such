@@ -1,6 +1,6 @@
 # compiled source #
-*.exe
+*.txt
 *.o
 *.swp 
-
+*.memcheck
 

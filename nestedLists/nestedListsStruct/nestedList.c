@@ -238,7 +238,6 @@ int main(int argc, char** argv){
 
 
 
-//remove this to for use
 // /*
     cleanList(list1);
     

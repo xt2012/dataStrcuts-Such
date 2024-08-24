@@ -99,7 +99,7 @@ int PushAmong(struct list* listInput, char* dataToBe, char* toBeLooked){
     for(int i=0; i<listInput->size; i++){
         
         if( strcmp( toBeLooked, forTemp->info ) == 0 ){
-            printf("fent debug typa shi'\n");
+            //printf("fent debug typa shi'\n");
             
             if(forTemp == listInput->end){
                
@@ -154,19 +154,6 @@ int cleanList(struct list* list){
     }
 
 
-    /*  list->end->prev = NULL;
-        list->end = NULL;
-        list->start->size = 0;
-        list->start->prev = NULL;
-        free(list->start->info);
-        list->start->info=NULL;
-        list->start->next=NULL;
-        
-        free(list->start);
-        list->start=NULL;
-        list->size--;   
-     */
-
     //end here. No if : less complexity.
         list->end->size = 0;
         list->end->prev = NULL;
@@ -176,18 +163,43 @@ int cleanList(struct list* list){
         free(list->end);
         list->start=NULL;
         list->end = NULL;
-        list->size--;
+//        list->size--; no not needed.
         return 0;
 }
 
+struct Node** Peek(struct list* list){ 
+/*just for the sake of a good time allocate it. keep in mind this is "complex" for no reason
+besides just bloating the code(aka having fun)
+could be done in a simpler way*/
+                                //given size "begins" at 0 add one to normalize it so C 
+                                //indexing standard.
+    struct Node** arrayNodes = malloc( (list->size+1) * sizeof(struct Node*) );
+                                if(!arrayNodes){ return NULL; }
 
-//seek return mem address?
-//peek
-//remove
+    struct Node* temp = list->start;
+
+    for (int x = 0 ;x<=list->size; x++){
+      
+          if(x==list->size){ arrayNodes[x] = list->end; return arrayNodes;}
+    
+      arrayNodes[x] = temp;
+      temp = temp->next;
+
+    }
+    return arrayNodes;
+
+}
+
+//seek return mem address? //<------- 2nd
+
+//peek - returns an array of type Node through a for loop
+
+//remove<---------3rd
 //sort (size of info ?)
 //duplicate
 //findDuplicates
 //move
+
 //clean function that null's the list, thus also make a function that creates a new list and
 //add its address to some indexing array.
 
@@ -195,6 +207,7 @@ int main(int argc, char** argv){
 
     struct list* list1 = malloc(sizeof(struct list));
     initList(list1);
+
     //PushEnd(list1, argv[1]);
     PushEnd(list1, "end");
     PushStart(list1, "start");
@@ -202,7 +215,7 @@ int main(int argc, char** argv){
     PushAmong(list1, "afterStart", "start");
     PushAmong(list1, "beforeBeforeEnd", "afterStart");
     PushAmong(list1, "beforeEnd", "beforeBeforeEnd");
-
+/*
     printf("%s\n",list1->start->info);
     printf("%ld\n",list1->start->size);
     printf("%p\n\n", list1->start);
@@ -228,26 +241,63 @@ int main(int argc, char** argv){
     
     printf("beforeEnd: %p\n",list1->start->next->next->next);
     printf("beforeEnd: %p\n\n",list1->end->prev);
+//function for this shit up here maybe you bastard
+        
+//    printf("%s\n",list1->end->info);
+//    printf("%ld\n",list1->end->size);
+//    printf("%p\n\n",list1->end);
+done made it fuck you*/
 
+    struct Node*** peekList = malloc(sizeof(struct Node**));
+    (*peekList) = Peek(list1);
+    printf("size:%ld\n\n", (list1->size));
 
-    printf("%s\n",list1->end->info);
-    printf("%ld\n",list1->end->size);
-    printf("%p\n\n",list1->end);
-
-
-
-
-
-// /*
-    cleanList(list1);
+    //--------
+    printf("element number %d\n", 0);
+    printf("%s\n", (*(peekList))[0]->info);
+    printf("string size: %ld\n",  (*   ( (*(peekList)) + 0) )->size );
+    printf("next: %s\n\n", (*(peekList))[0]->next->info);
     
-    printf("%ld\n",list1->size);
+    for (size_t x = 1; x<=(list1->size)-1; x++ ){
+        
+        printf("element number %ld\n", x);
+        printf("%s\n", (*(peekList))[x]->info);
+        printf("string size: %ld\n",  (*   ( (*(peekList)) +x) )->size );
+        printf("next: %s\n", (*(peekList))[x]->next->info);
+        printf("prev: %s\n\n", (*(peekList))[x]->prev->info);
 
+    /* imagine actually doing this. complexity maniacs simply ascend
+    if(x == 0){
+        printf("next: %s\n", (*(peekList))[x]->next->info);
+    }else if(x == list1->size){
+        printf("previous: %s\n", (*(peekList))[x]->prev->info);
+    }else {
+        printf("previous: %s\n", (*(peekList))[x]->prev->info);
+        printf("next: %s\n", (*(peekList))[x]->next->info);
+        }
+    */
+
+    }
+
+    printf("element number %ld\n", list1->size);
+    printf("%s\n", (*(peekList))[list1->size]->info);
+    printf("string size: %ld\n",  (*   ( (*(peekList)) + list1->size) )->size );
+    printf("prev: %s\n\n", (*(peekList))[list1->size]->prev->info);
+ 
+    free(*(peekList)); 
+    free(peekList);
+    peekList = NULL;
+    //--------
+   
+
+
+
+    cleanList(list1);
+    printf("%ld\n",(list1->size));
     printf("end:  %p\n", list1->end);
     printf("start:%p\n", list1->start);
-
     free(list1);
-// */ 
+    list1 = NULL; 
     return 0;
 
 }

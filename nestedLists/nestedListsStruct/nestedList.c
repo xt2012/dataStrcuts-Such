@@ -33,6 +33,56 @@ int initList( struct list* list ){
     return 0;
 }
 
+int bubbleSortLesserToGreater1( struct list* list ){//sort by size
+      struct Node *i, *j; 
+      struct Node* head = list->start;
+      int num;
+
+      for(i = head; i->next != NULL; i=i->next){
+        for(j=i->next; j!=NULL;j=j->next){
+           if(i->size > j->size){
+                num=j->size;
+                j->size = i->size;
+                i->size = num;
+           }
+        }
+      }
+    
+    return 0;
+}
+
+struct Node* bubbleSortLesserToGreater(struct Node* start) {
+    struct Node *end = NULL, *p, *q;
+
+    if (start == NULL || start->next == NULL) {
+        return start;
+    }
+
+    while (end != start->next) {
+        p = start;
+        while (p->next != end) {
+            q = p->next;
+            if (p->size > q->size) {
+                // Swap sizes
+                size_t tempSize = p->size;
+                p->size = q->size;
+                q->size = tempSize;
+
+                // Swap info pointers
+                char* tempInfo = p->info;
+                p->info = q->info;
+                q->info = tempInfo;
+            }
+            p = p->next;
+        }
+        end = p;
+    }
+
+    return start;
+}
+
+
+
 int verAddress(void * address1, void * address2){
 
     if(address1 == address2){ return 0; } 
@@ -207,7 +257,7 @@ int main(int argc, char** argv){
 
     struct list* list1 = malloc(sizeof(struct list));
     initList(list1);
-
+/*
     //PushEnd(list1, argv[1]);
     PushEnd(list1, "end");
     PushStart(list1, "start");
@@ -215,6 +265,18 @@ int main(int argc, char** argv){
     PushAmong(list1, "afterStart", "start");
     PushAmong(list1, "beforeBeforeEnd", "afterStart");
     PushAmong(list1, "beforeEnd", "beforeBeforeEnd");
+*/
+    PushEnd(list1, "start");
+    PushStart(list1, "enddddddddddd");
+
+    PushAmong(list1, "fourthhhhhhh", "enddddddddddd");
+    PushAmong(list1, "secondddd", "fourthhhhhhh");
+    PushAmong(list1, "thirdddddd", "secondddd");
+
+   
+
+    bubbleSortLesserToGreater( list1->start );
+
 /*
     printf("%s\n",list1->start->info);
     printf("%ld\n",list1->start->size);
@@ -247,7 +309,8 @@ int main(int argc, char** argv){
 //    printf("%ld\n",list1->end->size);
 //    printf("%p\n\n",list1->end);
 done made it fuck you*/
-
+    
+   
     struct Node*** peekList = malloc(sizeof(struct Node**));
     (*peekList) = Peek(list1);
     printf("size:%ld\n\n", (list1->size));

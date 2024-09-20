@@ -60,7 +60,7 @@ struct Node* bubbleSortLesserToGreater(struct Node* start) {
 
     while (end != start->next) {
         p = start;
-        while (p->next != end) {
+        while (p->next != end) {//h
             q = p->next;
             if (p->size > q->size) {
                 // Swap sizes
@@ -74,12 +74,45 @@ struct Node* bubbleSortLesserToGreater(struct Node* start) {
                 q->info = tempInfo;
             }
             p = p->next;
-        }
+         }//h 
+        
         end = p;
     }
 
     return start;
 }
+
+struct Node* insertionSort (struct list* list){
+    struct Node *p, *q;
+    char* tempInfo;
+    size_t tempSize;
+
+    p = list->start->next;
+    
+    for(int i=1; i<list->size+1; i++ ){
+
+       tempInfo = p->info;
+       tempSize = p->size;
+       q = p->prev;
+
+           while(q != NULL && q->size > tempSize){
+              q->next->size = q->size;
+              q->next->info = q->info;
+              q = q->prev;
+           }
+
+           if(q == NULL){
+                list->start->info = tempInfo;
+                list->start->size = tempSize;
+           }else{
+                q->next->info = tempInfo;
+                q->next->size = tempSize;
+           }
+           p = p->next;
+       } 
+    return list->start;
+}
+
 
 
 
@@ -275,7 +308,8 @@ int main(int argc, char** argv){
 
    
 
-    bubbleSortLesserToGreater( list1->start );
+//    bubbleSortLesserToGreater( list1->start );
+        insertionSort(list1);
 
 /*
     printf("%s\n",list1->start->info);

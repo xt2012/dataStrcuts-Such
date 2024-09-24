@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
+
 
 struct Node{
     struct Node* next;
@@ -33,53 +35,186 @@ int initList( struct list* list ){
     return 0;
 }
 
-int bubbleSortLesserToGreater1( struct list* list ){//sort by size
-      struct Node *i, *j; 
-      struct Node* head = list->start;
-      int num;
 
-      for(i = head; i->next != NULL; i=i->next){
-        for(j=i->next; j!=NULL;j=j->next){
-           if(i->size > j->size){
-                num=j->size;
-                j->size = i->size;
-                i->size = num;
-           }
-        }
-      }
+struct Node** makeNodeList(struct list *list){
+    struct Node** nodeList = malloc((list->size+1)*sizeof(struct Node*));
     
-    return 0;
+
+    struct Node* p = list->start;
+        for(int i = 0; i<=list->size; i++){
+        nodeList[i] = p;
+        p=p->next;
+    }
+    return nodeList;
 }
 
-struct Node* bubbleSortLesserToGreater(struct Node* start) {
-    struct Node *end = NULL, *p, *q;
 
-    if (start == NULL || start->next == NULL) {
-        return start;
+void nodeListToList(struct Node **nodeList, struct list *list){
+    //update the next\prev pointers correctly
+    if(list->size == 0) { return; }
+
+    list->start = nodeList[0];
+    list->end = nodeList[list->size];
+    struct Node *p = list->start;
+    p->prev = NULL;
+
+    for(int i = 0; i<= list->size; i++){
+        p->next = nodeList[i];
+        nodeList[i]->prev=p;
+
+        p=p->next;
     }
 
-    while (end != start->next) {
-        p = start;
-        while (p->next != end) {//h
-            q = p->next;
-            if (p->size > q->size) {
-                // Swap sizes
-                size_t tempSize = p->size;
+ }
+
+
+void merge(struct list *list, struct Node **nodeList, size_t inicio, size_t centro, size_t fim){
+    int fim1=0, fim2=0;
+    int tamanho=fim-inicio+1;
+    int p1=inicio;
+    int p2=centro+1;
+    int i,j,k;
+
+    struct Node **temp = malloc(tamanho*sizeof(struct Node*));
+
+    if(temp != NULL){
+        for(i = 0; i<tamanho; i++){
+            if(!fim1 && !fim2){//0 && 0, neither have been fully gone through.
+                if( nodeList[p1]->size < nodeList[p2]->size ){
+                    temp[i]=nodeList[p1];
+                    temp[i]->size=nodeList[p1]->size;
+                    temp[i]->info=nodeList[p1]->info;
+                    ++p1;
+                }else{
+                    temp[i]=nodeList[p2];
+                    temp[i]->info=nodeList[p2]->info;
+                    temp[i]->size=nodeList[p2]->size;
+                    ++p2;
+                }
+
+                if(p1>centro) fim1=1;
+                if(p2>fim) fim2=1;
+            }else{
+                if(!fim1){//fim1 hasnt been fully gone thru thus fim2 has.
+                    temp[i]=nodeList[p1];
+                    temp[i]->info=nodeList[p1]->info;
+                    temp[i]->size=nodeList[p1]->size;
+                    p1++;
+                }
+                else{
+                    temp[i]=nodeList[p2];
+                    temp[i]->info=nodeList[p2]->info;
+                    temp[i]->size=nodeList[p2]->size;
+                    ++p2;
+                }
+            }
+        }
+
+        for(j = 0, k = inicio; j<tamanho; j++,k++){
+            nodeList[k]=temp[j];
+            nodeList[k]->info=temp[j]->info;
+            nodeList[k]->size=temp[j]->size;
+        }
+        nodeListToList(nodeList,list);
+    }
+
+    free(temp);
+    temp=NULL;
+}
+
+
+void mergeSort(struct list *list, struct Node** nodeList, size_t inicio, size_t fim){
+
+    size_t centro;
+    if(inicio < fim){
+        centro = (inicio+fim)>>1;
+        mergeSort(list, nodeList, inicio, centro);
+        mergeSort(list, nodeList, centro+1, fim);
+        merge(list, nodeList, inicio, centro, fim);
+    }
+
+
+}
+
+
+
+void mergeSortReal(struct list *list, size_t inicio, size_t fim){
+    struct Node **nodeList = makeNodeList(list);
+    mergeSort(list, nodeList, 0, list->size);
+    free(nodeList);
+}
+
+
+struct Node* bubbleSortLesserToGreater(struct list* list) {
+   struct Node *p, *q;
+   p=list->start;
+   q=p->next;
+
+   char* tempInfo;
+   size_t tempSize;
+
+   int continueFlag=0, i=0;
+   size_t end = list->size;
+
+    do{
+       for(i=0; i<end; i++){
+            if( q->size < p->size ){
+                tempInfo = p->info;
+                tempSize = p->size;
+                
+                p->info = q->info;
                 p->size = q->size;
+
+                q->info = tempInfo;
                 q->size = tempSize;
 
-                // Swap info pointers
-                char* tempInfo = p->info;
-                p->info = q->info;
-                q->info = tempInfo;
+                continueFlag = i;
+                } 
+                p=p->next;
+                q=p->next;
             }
-            p = p->next;
-         }//h 
-        
-        end = p;
-    }
 
-    return start;
+            p=list->start;
+            q=p->next;
+        
+            end--;
+       
+       }while(continueFlag!=0);
+
+    return list->start;
+}
+
+struct Node* bubbleTest(struct list* list){
+    struct Node *p;
+    p=list->start;
+   
+    size_t end = list->size;
+
+    char* infoTemp;
+    size_t sizeTemp;
+    int counter;
+    
+    do{
+        counter = 0;
+        for(int i = 0; i<end; i++){
+           
+           if(p->size > p->next->size){
+                infoTemp = p->next->info;
+                sizeTemp = p->next->size;      
+           
+                p->next->size = p->size;
+                p->next->info = p->info;
+                p->size = sizeTemp;
+                p->info = infoTemp;
+                counter = i;
+           }
+           p=p->next;
+       }
+           p = list->start;
+           end--;
+    }while(counter != 0);
+
+    return list->start;
 }
 
 struct Node* insertionSort (struct list* list){
@@ -113,10 +248,88 @@ struct Node* insertionSort (struct list* list){
     return list->start;
 }
 
+struct Node* insertionTest(struct list* list){
+    struct Node *p, *q;
+    p=list->start->next;
+    q=p->prev;
+
+    char* tempInfo;
+    size_t tempSize;
+
+    for(int i = 1; i<list->size+1; i++){
+        tempInfo = p->info;
+        tempSize = p->size;
+        q=p->prev;
+        for(int j = i; (j>0)&& q!=NULL &&(q->size > tempSize); j-- ){
+            q->next->info = q->info;
+            q->next->size = q->size;
+            q=q->prev;
+        }
+        if(q == NULL){
+            list->start->info = tempInfo;
+            list->start->size = tempSize;
+        }else{
+            list->start->next->info = tempInfo;
+            list->start->next->size = tempSize;
+            }
+
+        p=p->next;
+    }
 
 
+    return list->start;
+}
 
-int verAddress(void * address1, void * address2){
+struct Node* selectionSort(struct list* list){
+
+    struct Node *beginControl = list->start;
+
+    //these two are just the I and J for the loops.
+    struct Node *greaterI=beginControl;
+    struct Node *greaterJ = greaterI->next;
+
+    struct Node *menor=malloc(sizeof(struct Node));
+    char* tempInfo;  tempInfo = NULL;
+    size_t tempSize; tempSize=0;
+     
+    for( int i = 0; i<list->size-1; i++){
+        menor=greaterI;
+        menor->size=greaterI->size;
+        menor->info=greaterI->info;       
+
+        for(int j = i+1; j<list->size+1; j++){//check for lessers
+            if(greaterJ->size < menor->size){
+                    menor = greaterJ;
+                    menor->size = greaterJ->size;
+                    menor->info = greaterJ->info;
+            }
+            greaterJ=greaterJ->next;
+        }
+        
+
+        if(menor != greaterI){
+            tempSize = greaterI->size;
+            tempInfo = greaterI->info;
+
+            greaterI->size = menor->size;
+            greaterI->info = menor->info;
+
+            menor->size = tempSize;
+            menor->info = tempInfo;
+        }
+       
+       beginControl=beginControl->next;
+       greaterI=beginControl;
+       greaterJ=greaterI->next;
+    }
+    //free(menor); this wont work cause "menor" points to an already existing node. 
+    //and given the freeing is already handled in a different function, doing it here
+    //causes a double free in tcache 
+    menor = NULL;
+    return list->start;
+}
+
+int verAddress(void* address1, void* address2){
 
     if(address1 == address2){ return 0; } 
     else { return -1; }
@@ -300,17 +513,30 @@ int main(int argc, char** argv){
     PushAmong(list1, "beforeEnd", "beforeBeforeEnd");
 */
     PushEnd(list1, "start");
-    PushStart(list1, "enddddddddddd");
+    PushStart(list1, "endddddddddddddd");
 
-    PushAmong(list1, "fourthhhhhhh", "enddddddddddd");
+    PushAmong(list1, "fourthhhhhhh", "endddddddddddddd");
     PushAmong(list1, "secondddd", "fourthhhhhhh");
     PushAmong(list1, "thirdddddd", "secondddd");
-
+    PushAmong(list1, "fifthhhhhhhhhh", "secondddd" );
    
 
-//    bubbleSortLesserToGreater( list1->start );
-        insertionSort(list1);
+//bubbleSortLesserToGreater( list1 );
+//insertionSort(list1);
+//selectionSort(list1);
 
+//bubbleTest(list1);
+//insertionTest(list1);
+
+/*
+struct Node** nodeList = makeNodeList(list1);
+mergeSort(list1, nodeList, 0, list1->size);
+free(nodeList);*/
+
+mergeSortReal(list1, 0, list1->size);
+
+//struct Node** runThru = makeNodeList(list1);
+//nodeListToList(runThru, list1);
 /*
     printf("%s\n",list1->start->info);
     printf("%ld\n",list1->start->size);
@@ -385,7 +611,9 @@ done made it fuck you*/
     free(peekList);
     peekList = NULL;
     //--------
-   
+    
+
+
 
 
 

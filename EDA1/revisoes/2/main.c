@@ -356,7 +356,73 @@ void mergeSort( int *v, int l, int r) {
     merge(v, l, m, r);
 }
 
+int quick(int *v, int l, int r){
+    int pivot=v[r];
+    int i, j;
+    i=l-1;
+    j=r;
+    
+
+    while( i<j ){
+        while( v[++i]< pivot );
+
+        while( v[--j]> pivot && j>l);
+
+        if(i<j) exch(v[i],v[j]);
+    }
+
+    exch(v[i],v[r]);
+
+    return i;
+}
+
+void basicQuickSort( int *v, int l, int r ){
+    if( r <= l ) return;
+  
+
+    int pivot = quick( v, l, r );
+    basicQuickSort(v, l, pivot-1);
+    basicQuickSort(v, pivot+1, r);
+}
+
+void medianaQuickSort( int *v, int l, int r ){
+    if( r <= l ) return;
+    
+    int meio = (r+l)/2;
+    if(v[meio]<v[l]) exch(v[meio], v[l]);
+    if(v[r]<v[l]) exch(v[r],v[l]);
+    if(v[meio]<v[r]) exch(v[meio], v[r]);
+    
+
+    int pivot = quick( v, l, r );
+    medianaQuickSort(v, l, pivot-1);
+    medianaQuickSort(v, pivot+1, r);
+}
+
+
+void medianaOtQuickSort( int *v, int l, int r, Compare comp ){
+    //if( r <= l ) return;
+    if(r-l<=15) return insertionSort(v,l,r, comp);
+    
+    int meio = (r+l)/2;
+    exch(v[meio], v[r-1]);
+    if(comp(&v[l], &v[r-1])<0) exch(v[l], v[r-1]);
+    if(comp(&v[l],&v[r])<0) exch(v[l],v[r]);
+    if(comp(&v[r-1],&v[r])<0) exch(v[r-1], v[r]);
+    
+
+    int pivot = quick( v, l+1, r-1 );
+    medianaOtQuickSort(v, l, pivot-1, comp);
+    medianaOtQuickSort(v, pivot+1, r, comp);
+}
 int main(int argc, char** argv){
+      int n;
+    scanf("%d", &n);
+    printf("%d elementos\n", n);
+    int *v = malloc(n*sizeof(int));
+     for(int i=0; i<n; i++) scanf("%d", &v[i]);
+
+
     if( strcmp(argv[1], "lista")==0 ){
         struct head *head1 = initData(50);   
         addNext( head1, 123 );
@@ -402,13 +468,16 @@ int main(int argc, char** argv){
         for(int i=0; i<5; i++){
             printf("%d\n", A[i]);
         }
-        //selectionSort(A, 0, 5);
+        //selectionSort(v, 0, n);
         //optDrag_bubbleSort(A,0,5, comp);
         // drag_insertionSort(A, 0, 5-1, comp);
-        mergeSort(A,0,5-1);
+        //mergeSort(A,0,5-1);
+        //basicQuickSort(v, 0, n);
+        medianaOtQuickSort(v, 0, n, comp);
         printf("\nDepois da ordenacao\n");
         for(int i=0; i<5; i++){
             printf("%d\n", A[i]);
         }
     }
+    free(v);
 }
